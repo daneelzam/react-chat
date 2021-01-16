@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import InfoBar from '../InfoBar/InfoBar';
 import './Chat.css'
 import Input from '../Input/Input';
+import Messages from '../Messages/Messages';
 
 
 var connectionOptions =  { // TODO поменять на чтото более симпотичное, как минимум на let
@@ -58,6 +59,7 @@ function Chat({location}) {
         <div className='outerContainer'>
             <div className='container'>
                 <InfoBar room={room} />
+                <Messages messages={messages} name={name}/>
                 <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
             </div>
         </div>
