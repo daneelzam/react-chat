@@ -14,14 +14,14 @@ const addUser = ({id, name, room}) => {
 
     users.push(user);
 
-    return {user} //TODO зачем объект еще раз оборачивать в объект
+    return {user}
 };
 
 const removeUser = (id) => {
     const index = users.findIndex((user)=> user.id === id)
 
     if(index !== -1){
-        return users.splice(index, 1)[0]; //TODO зачем возвращать именно нулевой элемент
+        return users.splice(index, 1)[0];
     }
 }
 

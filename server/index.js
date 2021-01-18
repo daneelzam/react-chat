@@ -1,6 +1,7 @@
 const express = require('express');
 const socketio = require('socket.io');
 const http = require('http');
+const cors = require('cors');
 
 const {addUser, removeUser, getUser, getUsersInRoom} = require('./users.js')
 
@@ -13,12 +14,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
+app.use(router);
+app.use(cors());
+
 io.on('connection', (socket) => {
     socket.on('join', ({name, room}, callback)=>{
         const {error, user} = addUser({ id: socket.id, name, room })
 
         if(error) return callback(error);
-        //TODO почему мы отправляем сообщения до того, как подключили юзера к комнате?
         socket.emit('message', { user: 'admin', text: `${user.name}, welcome to the room ${user.room}` });
         socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name}, has joined`});
 
@@ -31,10 +34,8 @@ io.on('connection', (socket) => {
 
     socket.on('sendMessage', (message, callback)=>{
         const user = getUser(socket.id);
-        //TODO почему выше мы использовали socket.to. а здесь используем io.to
         io.to(user.room).emit('message', { user: user.name, text: message })
         io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)})
-        //TODO зачем вызывать постоянно этот колбэк?
         callback();
     })
 
@@ -47,6 +48,5 @@ io.on('connection', (socket) => {
     })
 })
 
-app.use(router);
 
 server.listen(PORT, ()=>console.log(`Server started on port: ${PORT}`))
