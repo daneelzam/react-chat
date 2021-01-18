@@ -24,6 +24,8 @@ io.on('connection', (socket) => {
 
         socket.join(user.room);
 
+        io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)})
+
         callback();
     })
 
@@ -31,6 +33,7 @@ io.on('connection', (socket) => {
         const user = getUser(socket.id);
         //TODO почему выше мы использовали socket.to. а здесь используем io.to
         io.to(user.room).emit('message', { user: user.name, text: message })
+        io.to(user.room).emit('roomData', {room: user.room, users: getUsersInRoom(user.room)})
         //TODO зачем вызывать постоянно этот колбэк?
         callback();
     })
