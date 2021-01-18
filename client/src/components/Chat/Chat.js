@@ -9,6 +9,7 @@ import UsersContainer from '../UsersContainer/UsersContainer';
 
 import './Chat.css'
 
+
 var connectionOptions =  { // TODO поменять на чтото более симпотичное, как минимум на let
     "force new connection" : true,
     "reconnectionAttempts": "Infinity", 
@@ -34,12 +35,11 @@ function Chat({location}) {
         setRoom(room);
         setName(name);
 
-        socket.emit('join', {name, room}, () => {});
-
-        return () => {
-            socket.emit('disconnect');
-            socket.off();
-        }
+        socket.emit('join', {name, room}, (error) => {
+            if (error) {
+                alert(error);
+            }
+        });
 
     }, [ENDPOINT, location.search]);
 
@@ -53,15 +53,14 @@ function Chat({location}) {
         });
     }, [messages])
 
-    // function for sending messages
     const sendMessage = (event) => {
         event.preventDefault();
+
         if (message) {
             socket.emit('sendMessage', message, () => setMessage(''))
         }
     }
 
-    console.log(messages)
     return (
         <div className='outerContainer'>
             <div className='container'>
